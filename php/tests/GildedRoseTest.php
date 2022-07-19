@@ -10,6 +10,60 @@ use PHPUnit\Framework\TestCase;
 
 class GildedRoseTest extends TestCase
 {
+    public function test_aged_brie_increases_quality_by_two_after_sell_in_date(): void
+    {
+        $items = [new Item('Aged Brie', -1, 5)];
+        $gildedRose = new GildedRose($items);
+        $gildedRose->updateQuality();
+        $this->assertSame(-2, $items[0]->sell_in);
+        $this->assertSame(7, $items[0]->quality);
+    }
+
+    public function test_aged_brie_increases_quality_by_one_before_sell_in_date(): void
+    {
+        $items = [new Item('Aged Brie', 2, 5)];
+        $gildedRose = new GildedRose($items);
+        $gildedRose->updateQuality();
+        $this->assertSame(1, $items[0]->sell_in);
+        $this->assertSame(6, $items[0]->quality);
+    }
+
+    public function test_aged_brie_increases_quality_by_two_on_sell_in_date(): void
+    {
+        $items = [new Item('Aged Brie', 0, 5)];
+        $gildedRose = new GildedRose($items);
+        $gildedRose->updateQuality();
+        $this->assertSame(-1, $items[0]->sell_in);
+        $this->assertSame(7, $items[0]->quality);
+    }
+
+    public function test_aged_brie_quality_never_increases_max_value_after_sell_in_date(): void
+    {
+        $items = [new Item('Aged Brie', -1, 50)];
+        $gildedRose = new GildedRose($items);
+        $gildedRose->updateQuality();
+        $this->assertSame(-2, $items[0]->sell_in);
+        $this->assertSame(50, $items[0]->quality);
+    }
+
+    public function test_aged_brie_quality_never_increases_max_value_on_sell_in_date(): void
+    {
+        $items = [new Item('Aged Brie', 0, 50)];
+        $gildedRose = new GildedRose($items);
+        $gildedRose->updateQuality();
+        $this->assertSame(-1, $items[0]->sell_in);
+        $this->assertSame(50, $items[0]->quality);
+    }
+
+    public function test_aged_brie_quality_never_increases_max_value_before_sell_in_date(): void
+    {
+        $items = [new Item('Aged Brie', 5, 50)];
+        $gildedRose = new GildedRose($items);
+        $gildedRose->updateQuality();
+        $this->assertSame(4, $items[0]->sell_in);
+        $this->assertSame(50, $items[0]->quality);
+    }
+
     public function test_sulfuras_before_sell_in_date(): void
     {
         $items = [new Item('Sulfuras, Hand of Ragnaros', 1, 80)];
@@ -126,4 +180,6 @@ class GildedRoseTest extends TestCase
         $this->assertSame(4, $items[0]->sell_in);
         $this->assertSame(50, $items[0]->quality);
     }
+
+    //TODO Conjured tests
 }
