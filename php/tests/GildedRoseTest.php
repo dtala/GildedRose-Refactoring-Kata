@@ -10,14 +10,6 @@ use PHPUnit\Framework\TestCase;
 
 class GildedRoseTest extends TestCase
 {
-//    public function testFoo(): void
-//    {
-//        $items = [new Item('foo', 0, 0)];
-//        $gildedRose = new GildedRose($items);
-//        $gildedRose->updateQuality();
-//        $this->assertSame('fixme', $items[0]->name);
-//    }
-
     public function test_sulfuras_before_sell_in_date(): void
     {
         $items = [new Item('Sulfuras, Hand of Ragnaros', 1, 80)];
@@ -70,5 +62,68 @@ class GildedRoseTest extends TestCase
         $gildedRose->updateQuality();
         $this->assertSame(-1, $items[0]->sell_in);
         $this->assertSame(8, $items[0]->quality);
+    }
+
+    public function test_backstage_pass_quality_increase_by_two_on_ten_or_less_sell_in_date(): void
+    {
+        $items = [new Item('Backstage passes to a TAFKAL80ETC concert', 10, 10)];
+        $gildedRose = new GildedRose($items);
+        $gildedRose->updateQuality();
+        $this->assertSame(9, $items[0]->sell_in);
+        $this->assertSame(12, $items[0]->quality);
+    }
+
+    public function test_backstage_pass_quality_increase_by_three_on_five_or_less_sell_in_date(): void
+    {
+        $items = [new Item('Backstage passes to a TAFKAL80ETC concert', 5, 10)];
+        $gildedRose = new GildedRose($items);
+        $gildedRose->updateQuality();
+        $this->assertSame(4, $items[0]->sell_in);
+        $this->assertSame(13, $items[0]->quality);
+    }
+
+    public function test_backstage_pass_quality_drop_to_zero_after_sell_in_date(): void
+    {
+        $items = [new Item('Backstage passes to a TAFKAL80ETC concert', 0, 10)];
+        $gildedRose = new GildedRose($items);
+        $gildedRose->updateQuality();
+        $this->assertSame(-1, $items[0]->sell_in);
+        $this->assertSame(0, $items[0]->quality);
+    }
+
+    public function test_backstage_pass_quality_increase_by_one_when_sell_in_date_above_ten(): void
+    {
+        $items = [new Item('Backstage passes to a TAFKAL80ETC concert', 12, 10)];
+        $gildedRose = new GildedRose($items);
+        $gildedRose->updateQuality();
+        $this->assertSame(11, $items[0]->sell_in);
+        $this->assertSame(11, $items[0]->quality);
+    }
+
+    public function test_backstage_pass_quality_never_surpasses_max_value_above_ten_sell_in_days(): void
+    {
+        $items = [new Item('Backstage passes to a TAFKAL80ETC concert', 12, 50)];
+        $gildedRose = new GildedRose($items);
+        $gildedRose->updateQuality();
+        $this->assertSame(11, $items[0]->sell_in);
+        $this->assertSame(50, $items[0]->quality);
+    }
+
+    public function test_backstage_pass_quality_never_surpasses_max_value_below_ten_sell_in_days(): void
+    {
+        $items = [new Item('Backstage passes to a TAFKAL80ETC concert', 10, 49)];
+        $gildedRose = new GildedRose($items);
+        $gildedRose->updateQuality();
+        $this->assertSame(9, $items[0]->sell_in);
+        $this->assertSame(50, $items[0]->quality);
+    }
+
+    public function test_backstage_pass_quality_never_surpasses_max_value_below_five_sell_in_days(): void
+    {
+        $items = [new Item('Backstage passes to a TAFKAL80ETC concert', 5, 48)];
+        $gildedRose = new GildedRose($items);
+        $gildedRose->updateQuality();
+        $this->assertSame(4, $items[0]->sell_in);
+        $this->assertSame(50, $items[0]->quality);
     }
 }
