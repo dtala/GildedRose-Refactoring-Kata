@@ -181,5 +181,30 @@ class GildedRoseTest extends TestCase
         $this->assertSame(50, $items[0]->quality);
     }
 
-    //TODO Conjured tests
+    public function test_conjured_item_before_sell_in_date_lowers_quality_twice_as_fast_as_normal_items(): void
+    {
+        $items = [new Item('Conjured water', 10, 10)];
+        $gildedRose = new GildedRose($items);
+        $gildedRose->updateQuality();
+        $this->assertSame(9, $items[0]->sell_in);
+        $this->assertSame(8, $items[0]->quality);
+    }
+
+    public function test_conjured_item_after_sell_in_date_quality_lowers_twice_as_fast_as_normal_items(): void
+    {
+        $items = [new Item('Conjured bread', -1, 10)];
+        $gildedRose = new GildedRose($items);
+        $gildedRose->updateQuality();
+        $this->assertSame(-2, $items[0]->sell_in);
+        $this->assertSame(6, $items[0]->quality);
+    }
+
+    public function test_conjured_item_on_sell_in_date_quality_lowers_twice_as_fast_as_normal_items(): void
+    {
+        $items = [new Item('Conjured Mana Cake', 0, 10)];
+        $gildedRose = new GildedRose($items);
+        $gildedRose->updateQuality();
+        $this->assertSame(-1, $items[0]->sell_in);
+        $this->assertSame(6, $items[0]->quality);
+    }
 }

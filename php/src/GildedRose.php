@@ -53,6 +53,14 @@ final class GildedRose
 
             } elseif ($item->name === 'Sulfuras, Hand of Ragnaros') {
                 // Legendary!
+            } elseif (explode(' ', $item->name)[0] === 'Conjured') {
+                $item->quality -= 2;
+                --$item->sell_in;
+
+                if ($item->sell_in <= 0) {
+                    $item->quality -= 2;
+                }
+                break;
             } else {
                 --$item->quality;
                 --$item->sell_in;
