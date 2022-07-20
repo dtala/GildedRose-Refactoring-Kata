@@ -19,37 +19,46 @@ final class GildedRose
     public function updateQuality(): void
     {
         foreach ($this->items as $item) {
-            if ($item->name !== 'Aged Brie' && $item->name !== 'Backstage passes to a TAFKAL80ETC concert') {
-                if (($item->quality > 0) && $item->name !== 'Sulfuras, Hand of Ragnaros') {
-                    --$item->quality;
-                }
-            } else if ($item->quality < 50) {
-                ++$item->quality;
-                if ($item->name === 'Backstage passes to a TAFKAL80ETC concert') {
-                    if (($item->sell_in < 11) && $item->quality < 50) {
-                        ++$item->quality;
-                    }
-                    if (($item->sell_in < 6) && $item->quality < 50) {
-                        ++$item->quality;
-                    }
-                }
-            }
-
-            if ($item->name !== 'Sulfuras, Hand of Ragnaros') {
-                --$item->sell_in;
-            }
-
-            if ($item->sell_in < 0) {
-                if ($item->name !== 'Aged Brie') {
-                    if ($item->name !== 'Backstage passes to a TAFKAL80ETC concert') {
-                        if (($item->quality > 0) && $item->name !== 'Sulfuras, Hand of Ragnaros') {
-                            --$item->quality;
-                        }
-                    } else {
-                        $item->quality -= $item->quality;
-                    }
-                } else if ($item->quality < 50) {
+            if ($item->name === 'Aged Brie') {
+                if ($item->quality < 50) {
                     ++$item->quality;
+                }
+
+                if ($item->sell_in <= 0 && $item->quality !== 50) {
+                    ++$item->quality;
+                }
+
+                --$item->sell_in;
+
+            } elseif ($item->name === 'Backstage passes to a TAFKAL80ETC concert') { // TODO simplify
+                if ($item->sell_in <= 0) {
+                    $item->quality = 0;
+                } else if ($item->sell_in > 11 && $item->quality < 50) {
+                    ++$item->quality;
+                } else if ($item->sell_in > 5 && $item->sell_in < 11) {
+                    if ($item->quality < 49) {
+                        $item->quality += 2;
+                    } else {
+                        $item->quality = 50;
+                    }
+                } else if ($item->sell_in <= 5) {
+                    if ($item->quality < 48) {
+                        $item->quality += 3;
+                    } else {
+                        $item->quality = 50;
+                    }
+                }
+
+                --$item->sell_in;
+
+            } elseif ($item->name === 'Sulfuras, Hand of Ragnaros') {
+                // Legendary!
+            } else {
+                --$item->quality;
+                --$item->sell_in;
+
+                if ($item->sell_in <= 0) {
+                    --$item->quality;
                 }
             }
         }
