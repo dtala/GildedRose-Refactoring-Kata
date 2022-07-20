@@ -30,23 +30,23 @@ final class GildedRose
 
                 --$item->sell_in;
 
-            } elseif ($item->name === 'Backstage passes to a TAFKAL80ETC concert') { // TODO simplify
+            } elseif ($item->name === 'Backstage passes to a TAFKAL80ETC concert') {
+                ++$item->quality;
+
+                if ($item->sell_in <= 10) {
+                    ++$item->quality;
+                }
+
+                if ($item->sell_in <= 5) {
+                    ++$item->quality;
+                }
+
+                if ($item->quality > 50) {
+                    $item->quality = 50;
+                }
+
                 if ($item->sell_in <= 0) {
                     $item->quality = 0;
-                } else if ($item->sell_in > 11 && $item->quality < 50) {
-                    ++$item->quality;
-                } else if ($item->sell_in > 5 && $item->sell_in < 11) {
-                    if ($item->quality < 49) {
-                        $item->quality += 2;
-                    } else {
-                        $item->quality = 50;
-                    }
-                } else if ($item->sell_in <= 5) {
-                    if ($item->quality < 48) {
-                        $item->quality += 3;
-                    } else {
-                        $item->quality = 50;
-                    }
                 }
 
                 --$item->sell_in;
